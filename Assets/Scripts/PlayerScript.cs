@@ -9,18 +9,25 @@ public class PlayerScript : MonoBehaviour
     
     Rigidbody rb;
     
-    public float speed;
+    public float topSpeed;
+    public float acceleration;
+    public float deceleration;
     public float sideSpeed;
-    public float xLaneMaxValue;
+    public float xLaneLimit;
     public float jumpForce;
-    public bool isjumping;
-    public float moveDisplacement;
-    public float moveDisplacementSpeed;
+    [Range(1,20)]
+    public float moveSensitivity = 10;
 
-    private float preXTouchPosition;
-    private float postXTouchPosition;
 
-    public float xPosition;
+    //Private Variables
+    bool isjumping;
+    float xPosition;
+    float forwardSpeed;
+
+
+    //Public Calls to Variables
+    public bool Isjumping { get => isjumping; set => isjumping = value; }
+    public float XPosition { get => xPosition; set => xPosition = value; }
 
     //public float forwardvelocity;
     // Start is called before the first frame update
@@ -34,55 +41,58 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        
-        this.transform.position += this.transform.forward  * Time.deltaTime * speed;
+
+        ForwardMovement();
         SideMovement();
-        if (xPosition > -xLaneMaxValue && xPosition < xLaneMaxValue)
-        {
-            this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, xPosition, Time.deltaTime * sideSpeed), this.transform.position.y, this.transform.position.z);
-        }
 
         
 
     }
 
 
+    void ForwardMovement()
+    {
+        if (RefHolder.instance.playerController.Tap && isjumping != true)
+        {
+            forwardSpeed += acceleration;
+            if(forwardSpeed > topSpeed)
+            {
+                forwardSpeed = topSpeed;
+            }
+        }
+        else if(!isjumping)
+        {
+            forwardSpeed -= deceleration;
+            if (forwardSpeed < 0)
+            {
+                forwardSpeed = 0;
+            }
+        }
+        this.transform.position += this.transform.forward * Time.deltaTime * forwardSpeed;
+    }
+
     void SideMovement()
     {
-        if (PlayerController.instance.tap)
-        {
-            
-            preXTouchPosition = PlayerController.instance.touchPosition.x;
-            
-            if(preXTouchPosition != postXTouchPosition && postXTouchPosition!= 0)
+        if (RefHolder.instance.playerController.Move)
+        {                         
+            if(xPosition > -xLaneLimit && xPosition < xLaneLimit)
             {
-                moveDisplacement = postXTouchPosition - preXTouchPosition;
-                
-                if(xPosition > -xLaneMaxValue && xPosition < xLaneMaxValue)
+                //MoveValue Set
+                xPosition -= RefHolder.instance.playerController.MoveDisplacement * moveSensitivity;
+                //Check Limit
+                if (xPosition <= -xLaneLimit)
                 {
-                    xPosition -= moveDisplacement * moveDisplacementSpeed;
-                    if (xPosition <= -xLaneMaxValue)
-                    {
-                        xPosition = -(xLaneMaxValue-0.01f);
-                    }
-                    else if (xPosition >= xLaneMaxValue)
-                    {
-                        xPosition = (xLaneMaxValue - 0.01f);
-                    }
+                    xPosition = -(xLaneLimit - 0.01f);
                 }
- 
-
+                else if (xPosition >= xLaneLimit)
+                {
+                    xPosition = (xLaneLimit - 0.01f);
+                }     
             }
+        }
+        //Moving
+        this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, xPosition, Time.deltaTime * sideSpeed), this.transform.position.y, this.transform.position.z);
 
-            postXTouchPosition = preXTouchPosition;
-            //moveDisplacement = 0;
-        }
-        else
-        {
-            preXTouchPosition = 0;
-            postXTouchPosition = 0;
-            //moveDisplacement = 0;
-        }
     }
 
 
@@ -95,6 +105,14 @@ public class PlayerScript : MonoBehaviour
         else if (collision.gameObject.CompareTag("Jumper"))
         {
             Jump();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("EndTrigger"))
+        {
+            RefHolder.instance.levelGenaration.deleteTile();
         }
     }
 

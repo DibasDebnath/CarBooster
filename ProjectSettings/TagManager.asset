@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Jumper
   - Road
+  - EndTrigger
   layers:
   - Default
   - TransparentFX

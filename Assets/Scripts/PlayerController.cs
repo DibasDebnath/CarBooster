@@ -1,29 +1,38 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController instance;
     Controller inputAction;
 
-    public bool tap;
-    public bool move;
-    
+    public bool takeInputsBool;
+    public float moveThreshold;
 
-    public Vector2 preTouchPosition;
-    public Vector2 touchPosition;
 
-    public Vector2 oldTouchPosition;
+    //Private Variables
+    bool tap;
+    bool move;
+    float moveDisplacement;
+    Vector2 screenTouchPosition;
+    Vector2 currentTouchPosition;
+    Vector2 oldTouchPosition;
+
+
+    //Public Call to Variables
+    public bool Move { get => move; set => move = value; }
+    public float MoveDisplacement { get => moveDisplacement; set => moveDisplacement = value; }
+    public bool Tap { get => tap; set => tap = value; }
 
     private void Awake()
     {
-        instance = this;
+        
         inputAction = new Controller();
         inputAction.Player.TouchStart.performed += ctx => tap = true;
         inputAction.Player.TouchEnd.performed += ctx => tap = false;
-        inputAction.Player.TouchMove.performed += ctx => preTouchPosition = ctx.ReadValue<Vector2>();
+        inputAction.Player.TouchMove.performed += ctx => screenTouchPosition = ctx.ReadValue<Vector2>();
         
     }
     private void Start()
@@ -37,35 +46,48 @@ public class PlayerController : MonoBehaviour
 ;   }
     private void FixedUpdate()
     {
+        if (takeInputsBool)
+        {
+            TakeInputs();
+        }
+        else if (tap == true || move == true)
+        {
+            tap = false;
+            move = false;
+        }
+            
+    }
+
+    void TakeInputs()
+    {
         if (tap)
         {
-            touchPosition.x = preTouchPosition.x / Screen.width;
-            touchPosition.y = preTouchPosition.y / Screen.height;
-            if(oldTouchPosition.x == touchPosition.x)
+            currentTouchPosition.x = screenTouchPosition.x / Screen.width;
+            currentTouchPosition.y = screenTouchPosition.y / Screen.height;
+
+            if (oldTouchPosition.x != currentTouchPosition.x && oldTouchPosition.x != 0 && Math.Abs(oldTouchPosition.x - currentTouchPosition.x) > moveThreshold)
             {
-                move = false;
-            }
-            else if(oldTouchPosition.x != touchPosition.x || oldTouchPosition.y != touchPosition.y)
-            {
+                moveDisplacement = oldTouchPosition.x - currentTouchPosition.x;
                 move = true;
             }
             else
             {
+                moveDisplacement = 0;
                 move = false;
             }
 
-            oldTouchPosition.x = touchPosition.x;
-            oldTouchPosition.y = touchPosition.y;
+            oldTouchPosition.x = currentTouchPosition.x;
+            oldTouchPosition.y = currentTouchPosition.y;
         }
         else
         {
-            touchPosition.x = 0;
-            touchPosition.y = 0;
+            currentTouchPosition.x = 0;
+            currentTouchPosition.y = 0;
             oldTouchPosition.x = 0;
             oldTouchPosition.y = 0;
+            moveDisplacement = 0;
             move = false;
         }
-            
     }
 
     private void OnEnable()
@@ -77,4 +99,6 @@ public class PlayerController : MonoBehaviour
     {
         inputAction.Disable();
     }
+
+    
 }
