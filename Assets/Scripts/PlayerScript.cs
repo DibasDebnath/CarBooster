@@ -60,7 +60,7 @@ public class PlayerScript : MonoBehaviour
                 
                 if(xPosition > -xLaneMaxValue && xPosition < xLaneMaxValue)
                 {
-                    xPosition += moveDisplacement * moveDisplacementSpeed;
+                    xPosition -= moveDisplacement * moveDisplacementSpeed;
                     if (xPosition <= -xLaneMaxValue)
                     {
                         xPosition = -(xLaneMaxValue-0.01f);
