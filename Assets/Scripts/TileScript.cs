@@ -37,7 +37,7 @@ public class TileScript : MonoBehaviour
         List<bool> isSpawnedList = new List<bool>(new bool[spawnLimit]);
         int spawned = 0;
         int numberOfItemToSpawn = Random.Range(0, spawnLimit);
-        Debug.Log(isSpawnedList[0]);
+        //Debug.Log(isSpawnedList[0]);
         int spawnPos = 0;
         while(spawned <= numberOfItemToSpawn)
         {

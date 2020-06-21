@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     //Private Variables
     bool tap;
+    private bool processedTap;
     bool move;
     float moveDisplacement;
     Vector2 screenTouchPosition;
@@ -24,7 +25,7 @@ public class PlayerController : MonoBehaviour
     //Public Call to Variables
     public bool Move { get => move; set => move = value; }
     public float MoveDisplacement { get => moveDisplacement; set => moveDisplacement = value; }
-    public bool Tap { get => tap; set => tap = value; }
+    public bool ProcessedTap { get => processedTap; set => processedTap = value; }
 
     private void Awake()
     {
@@ -37,31 +38,32 @@ public class PlayerController : MonoBehaviour
     }
     private void Start()
     {
-        tap = false;
-        move = false;
+        
     }
     private void Update()
     {
-        
+        if (takeInputsBool)
+        {
+            processedTap = tap;           
+            TakeInputs();
+        }
+        else if (processedTap == true || move == true)
+        {
+            processedTap = false;
+            move = false;
+        }
 ;   }
     private void FixedUpdate()
     {
-        if (takeInputsBool)
-        {
-            TakeInputs();
-        }
-        else if (tap == true || move == true)
-        {
-            tap = false;
-            move = false;
-        }
+        
             
     }
 
     void TakeInputs()
     {
-        if (tap)
+        if (processedTap)
         {
+            //Debug.LogError("takes input");
             currentTouchPosition.x = screenTouchPosition.x / Screen.width;
             currentTouchPosition.y = screenTouchPosition.y / Screen.height;
 

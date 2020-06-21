@@ -7,6 +7,7 @@ public class LevelGenaration : MonoBehaviour
 
     public Transform startPosTransform;
     public GameObject roadTile;
+    public GameObject endRaceRoadTile;
     public Transform tileHolder;
     public float tileDistance;
 
@@ -20,8 +21,10 @@ public class LevelGenaration : MonoBehaviour
 
 
 
-
+    private bool endraceTileBool;
     private GameObject tmpTile;
+
+    public bool EndraceTileBool { get => endraceTileBool; set => endraceTileBool = value; }
 
 
 
@@ -50,7 +53,16 @@ public class LevelGenaration : MonoBehaviour
 
     private void spawnTile()
     {
-        tmpTile = Instantiate(roadTile, newGenPos, Quaternion.identity, tileHolder);
+        if (endraceTileBool)
+        {
+            endraceTileBool = false;
+            tmpTile = Instantiate(endRaceRoadTile, newGenPos, Quaternion.identity, tileHolder);
+        }
+        else
+        {
+            tmpTile = Instantiate(roadTile, newGenPos, Quaternion.identity, tileHolder);
+        }
+        
         tmpTile.SetActive(true);
         spawnedTileList.Add(tmpTile);
         spawnedTileCount++;

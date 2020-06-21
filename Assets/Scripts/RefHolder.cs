@@ -13,6 +13,7 @@ public class RefHolder : MonoBehaviour
     public PlayerController playerController;
     public LevelGenaration levelGenaration;
     public Gameplay gameplay;
+    public UICon uiCon;
     private void Awake()
     {
         if (instance == null)

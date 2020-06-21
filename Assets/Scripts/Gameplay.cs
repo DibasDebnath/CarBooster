@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class Gameplay : MonoBehaviour
 {
+
+
+    public float levelEndTimer = 10f;
+
     // Start is called before the first frame update
     void Start()
     {
-        enableInputs();
+        //enableInputs();
+        disableInputs();
     }
 
     // Update is called once per frame
@@ -15,6 +20,19 @@ public class Gameplay : MonoBehaviour
     {
         
     }
+
+
+    public void startGame()
+    {
+        enableInputs();
+        StartCoroutine(EndRaceCounter());
+    }
+    public void endGame()
+    {
+        disableInputs();
+        RefHolder.instance.uiCon.uiAnimCon.endPanelIn();
+    }
+
 
     public void enableInputs()
     {
@@ -26,4 +44,11 @@ public class Gameplay : MonoBehaviour
     }
 
 
+
+
+    IEnumerator EndRaceCounter()
+    {
+        yield return new WaitForSeconds(levelEndTimer);
+        RefHolder.instance.levelGenaration.EndraceTileBool = true;
+    }
 }

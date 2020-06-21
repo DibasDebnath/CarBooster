@@ -9,12 +9,20 @@ public class PlayerScript : MonoBehaviour
     
     Rigidbody rb;
     
+    [Header("Player Perameters")]
     public float topSpeed;
     public float acceleration;
     public float deceleration;
     public float sideSpeed;
     public float xLaneLimit;
     public float jumpForce;
+
+    [Header("Speed Boost Perameters")]
+    public float speedBoost;
+    public float speedBoostAcceleration;
+    public float speedBoostDeceleration;
+    public float speedBoostTime;
+    
     [Range(1,20)]
     public float moveSensitivity = 10;
 
@@ -22,7 +30,8 @@ public class PlayerScript : MonoBehaviour
     //Private Variables
     bool isjumping;
     float xPosition;
-    float forwardSpeed;
+    public float forwardSpeed;
+    float tmpSpeedBostTime = 0;
 
 
     //Public Calls to Variables
@@ -52,12 +61,13 @@ public class PlayerScript : MonoBehaviour
 
     void ForwardMovement()
     {
-        if (RefHolder.instance.playerController.Tap && isjumping != true)
+        if (RefHolder.instance.playerController.ProcessedTap && isjumping != true)
         {
+            //Debug.Log("took Input");
             forwardSpeed += acceleration;
             if(forwardSpeed > topSpeed)
             {
-                forwardSpeed = topSpeed;
+                forwardSpeed -= 1f;
             }
         }
         else if(!isjumping)
@@ -68,7 +78,10 @@ public class PlayerScript : MonoBehaviour
                 forwardSpeed = 0;
             }
         }
-        this.transform.position += this.transform.forward * Time.deltaTime * forwardSpeed;
+        if (RefHolder.instance.playerController.takeInputsBool)
+        {
+            this.transform.position += this.transform.forward * Time.deltaTime * forwardSpeed;
+        }
     }
 
     void SideMovement()
@@ -91,7 +104,10 @@ public class PlayerScript : MonoBehaviour
             }
         }
         //Moving
-        this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, xPosition, Time.deltaTime * sideSpeed), this.transform.position.y, this.transform.position.z);
+        if (RefHolder.instance.playerController.takeInputsBool)
+        {
+            this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, xPosition, Time.deltaTime * sideSpeed), this.transform.position.y, this.transform.position.z);
+        }
 
     }
 
@@ -100,7 +116,13 @@ public class PlayerScript : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Road"))
         {
-            isjumping = false;
+            if (isjumping)
+            {
+                isjumping = false;
+                //Debug.LogError("ground colliding");
+                SpeedBooster();
+            }
+            
         }
         else if (collision.gameObject.CompareTag("Jumper"))
         {
@@ -114,6 +136,15 @@ public class PlayerScript : MonoBehaviour
         {
             RefHolder.instance.levelGenaration.deleteTile();
         }
+        else if (other.CompareTag("EndRaceTrigger"))
+        {
+            RefHolder.instance.gameplay.endGame();
+            tmpSpeedBostTime = 0;
+        }
+        else if (other.CompareTag("StartTileDeleteTrigger"))
+        {
+            Destroy(other.transform.parent.gameObject);
+        }
     }
 
     private void Jump()
@@ -123,4 +154,31 @@ public class PlayerScript : MonoBehaviour
         rb.AddForce(this.transform.up * jumpForce, ForceMode.Impulse);
     }
    
+
+    private void SpeedBooster()
+    {
+        if(tmpSpeedBostTime <= 0)
+        {
+            tmpSpeedBostTime = speedBoostTime;
+            topSpeed += speedBoost;
+            acceleration += speedBoostAcceleration;
+            deceleration += speedBoostDeceleration;
+            StartCoroutine(speedBoosCor());
+        }
+        else
+        {
+            tmpSpeedBostTime = speedBoostTime;
+        }
+    }
+    IEnumerator speedBoosCor()
+    {
+        while(tmpSpeedBostTime > 0)
+        {
+            yield return new WaitForSeconds(0.1f);
+            tmpSpeedBostTime -= 0.1f;
+        }
+        topSpeed -= speedBoost;
+        acceleration -= speedBoostAcceleration;
+        deceleration -= speedBoostDeceleration;
+    }
 }
