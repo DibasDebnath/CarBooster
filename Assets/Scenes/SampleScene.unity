@@ -393,7 +393,7 @@ MonoBehaviour:
   speedBoostAcceleration: 0.6
   speedBoostDeceleration: 0.6
   speedBoostTime: 0.5
-  moveSensitivity: 15
+  moveSensitivity: 20
   forwardSpeed: 0
 --- !u!54 &92570460
 Rigidbody:
@@ -748,7 +748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   takeInputsBool: 0
-  moveThreshold: 0.01
+  moveThreshold: 0
 --- !u!4 &635733108
 Transform:
   m_ObjectHideFlags: 0
@@ -849,7 +849,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.46019676}
   m_AnchorMax: {x: 1, y: 0.7454098}
-  m_AnchoredPosition: {x: 0.0019989014, y: 0.34000015}
+  m_AnchoredPosition: {x: 0.0020141602, y: 0.34000015}
   m_SizeDelta: {x: 0.004486084, y: -1.450203}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &657046132

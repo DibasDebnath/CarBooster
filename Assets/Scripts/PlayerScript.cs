@@ -13,6 +13,7 @@ public class PlayerScript : MonoBehaviour
     public float topSpeed;
     public float acceleration;
     public float deceleration;
+    [Range(1, 10)]
     public float sideSpeed;
     public float xLaneLimit;
     public float jumpForce;
@@ -23,8 +24,8 @@ public class PlayerScript : MonoBehaviour
     public float speedBoostDeceleration;
     public float speedBoostTime;
     
-    [Range(1,20)]
-    public float moveSensitivity = 10;
+    [Range(1,50)]
+    public float moveSensitivity = 20;
 
 
     //Private Variables
