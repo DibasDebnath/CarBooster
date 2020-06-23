@@ -79,10 +79,9 @@ public class PlayerScript : MonoBehaviour
                 forwardSpeed = 0;
             }
         }
-        if (RefHolder.instance.playerController.takeInputsBool)
-        {
-            this.transform.position += this.transform.forward * Time.deltaTime * forwardSpeed;
-        }
+        
+        this.transform.position += this.transform.forward * Time.deltaTime * forwardSpeed;
+        
     }
 
     void SideMovement()
@@ -105,10 +104,9 @@ public class PlayerScript : MonoBehaviour
             }
         }
         //Moving
-        if (RefHolder.instance.playerController.takeInputsBool)
-        {
-            this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, xPosition, Time.deltaTime * sideSpeed), this.transform.position.y, this.transform.position.z);
-        }
+        
+        this.transform.position = new Vector3(Mathf.Lerp(this.transform.position.x, xPosition, Time.deltaTime * sideSpeed), this.transform.position.y, this.transform.position.z);
+        
 
     }
 
