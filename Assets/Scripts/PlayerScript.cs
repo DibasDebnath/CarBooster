@@ -23,11 +23,21 @@ public class PlayerScript : MonoBehaviour
     public float speedBoostAcceleration;
     public float speedBoostDeceleration;
     public float speedBoostTime;
-    
-    [Range(1,50)]
-    public float moveSensitivity = 20;
+
+    [Header("Player Control Perameters")]
+    [Range(1,100)]
+    public float moveSensitivity = 50;
 
 
+    [Header("Player Rotation Perameters")]
+    [Range(0, 180)]
+    public float rotationZ = 0;
+    public float smooth = 5.0f;
+
+
+
+    [Header("Player Rotation Perameters")]
+    public PlayerAnimationScript playerAnimationScript; 
     //Private Variables
     bool isjumping;
     float xPosition;
@@ -55,7 +65,7 @@ public class PlayerScript : MonoBehaviour
         ForwardMovement();
         SideMovement();
 
-        
+        playerRotator();
 
     }
 
@@ -118,20 +128,25 @@ public class PlayerScript : MonoBehaviour
             if (isjumping)
             {
                 isjumping = false;
+                playerAnimationScript.push();
                 //Debug.LogError("ground colliding");
                 SpeedBooster();
             }
             
         }
-        else if (collision.gameObject.CompareTag("Jumper"))
-        {
-            Jump();
-        }
+        //else if (collision.gameObject.CompareTag("Jumper") && !isjumping)
+        //{
+        //    Jump();
+        //}
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("EndTrigger"))
+        if (other.CompareTag("Jumper") && !isjumping)
+        {
+            Jump();
+        }
+        else if (other.CompareTag("EndTrigger"))
         {
             RefHolder.instance.levelGenaration.deleteTile();
         }
@@ -144,6 +159,7 @@ public class PlayerScript : MonoBehaviour
         {
             Destroy(other.transform.parent.gameObject);
         }
+        
     }
 
     private void Jump()
@@ -151,6 +167,7 @@ public class PlayerScript : MonoBehaviour
         isjumping = true;
         rb.velocity = new Vector3(0, 0, 0);
         rb.AddForce(this.transform.up * jumpForce, ForceMode.Impulse);
+        playerAnimationScript.jumpUp();
     }
    
 
@@ -179,5 +196,26 @@ public class PlayerScript : MonoBehaviour
         topSpeed -= speedBoost;
         acceleration -= speedBoostAcceleration;
         deceleration -= speedBoostDeceleration;
+    }
+
+
+
+
+    // Player Rotation 
+
+    public void playerRotator()
+    {
+        // Smoothly tilts a transform towards a target rotation.
+        float tiltAroundZ = 300 * RefHolder.instance.playerController.MoveDisplacement;
+        
+
+        // Rotate the cube by converting the angles into a quaternion.
+        Quaternion target = Quaternion.Euler(0, 0, tiltAroundZ);
+
+        //float velocity = rb.velocity.x;
+
+
+        // Dampen towards the target rotation
+        transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * smooth);
     }
 }

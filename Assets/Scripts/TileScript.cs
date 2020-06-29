@@ -10,6 +10,9 @@ public class TileScript : MonoBehaviour
     public GameObject ramp;
     public List<Transform> rampSpawnPoints;
 
+    //Side Objects
+    
+
 
     // Start is called before the first frame update
     void Start()

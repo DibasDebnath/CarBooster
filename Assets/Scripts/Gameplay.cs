@@ -25,11 +25,14 @@ public class Gameplay : MonoBehaviour
     public void startGame()
     {
         enableInputs();
+        RefHolder.instance.worldCurver.StartCurver();
+        RefHolder.instance.playerController.MoveDisplacement = 0;
         StartCoroutine(EndRaceCounter());
     }
     public void endGame()
     {
         disableInputs();
+        RefHolder.instance.worldCurver.StopCurver();
         RefHolder.instance.uiCon.uiAnimCon.endPanelIn();
     }
 
