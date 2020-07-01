@@ -14,7 +14,7 @@ public class RefHolder : MonoBehaviour
     public LevelGenaration levelGenaration;
     public Gameplay gameplay;
     public UICon uiCon;
-    public WorldCurver worldCurver;
+    public BendingManager bendingManager;
     private void Awake()
     {
         if (instance == null)

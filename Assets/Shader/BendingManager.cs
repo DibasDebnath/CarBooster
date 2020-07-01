@@ -36,20 +36,24 @@ public class BendingManager : MonoBehaviour
         Shader.SetGlobalFloat(SideCurveID, smoothedCurveStrenght);
         //Shader.SetGlobalFloat(m_CurveStrengthID2, curveStrength2);
 
-        
-        if (isCurverOn && RefHolder.instance.playerController.ProcessedTap)
+        if(RefHolder.instance != null)
         {
+            if (isCurverOn && RefHolder.instance.playerController.ProcessedTap)
+            {
 
-            smoothedCurveStrenght = Mathf.Lerp(smoothedCurveStrenght, currentCurveStrenght, 0.05f * Time.deltaTime);
+                smoothedCurveStrenght = Mathf.Lerp(smoothedCurveStrenght, currentCurveStrenght, 0.05f * Time.deltaTime);
+            }
         }
+        
 
     }
 
     private void Start()
     {
         currentCurveStrenght = UnityEngine.Random.Range(minSideCurve, maxSideCurve);
+        smoothedCurveStrenght = currentCurveStrenght;
         Shader.SetGlobalFloat(DownCurveID, downCurve);
-        StartCurver();
+        //StartCurver();
 
         //Debug.LogError(Shader.GetGlobalFloat(m_CurveStrengthID));
     }
@@ -58,7 +62,7 @@ public class BendingManager : MonoBehaviour
     {
         isCurverOn = true;
 
-        smoothedCurveStrenght = currentCurveStrenght;
+        //smoothedCurveStrenght = currentCurveStrenght;
         StartCoroutine(CurveValueChanger());
     }
 
